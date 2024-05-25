@@ -1,4 +1,4 @@
-import { Facebook, Github, Linkedin, UtensilsCrossed } from "lucide-react";
+import { Facebook, Github, Linkedin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "./ui/separator";
 import Logo from "./Logo";
@@ -28,7 +28,7 @@ const Footer = () => {
               href="https://www.linkedin.com/in/shantonoor/"
               title="Email"
               target="_blank"
-              className="slide-from-right focus:ring hover:ring focus:ri hover:ri flex items-center justify-center w-10 h-10 rounded-full bg-primary text-gray-50   dark:text-gray-900"
+              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full bg-primary text-gray-50   dark:text-gray-900"
             >
               <Linkedin className="w-5 h-5" />
             </a>
@@ -37,7 +37,7 @@ const Footer = () => {
               href="https://www.facebook.com/ShantoN00R/"
               title="Facebook"
               target="_blank"
-              className="slide-from-right focus:ring hover:ring focus:ri hover:ri flex items-center justify-center w-10 h-10 rounded-full sm:w-10 sm:h-10 bg-primary text-gray-50   dark:text-gray-900"
+              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full sm:w-10 sm:h-10 bg-primary text-gray-50   dark:text-gray-900"
             >
               <Facebook className="w-5 h-5" />
             </a>
@@ -47,7 +47,7 @@ const Footer = () => {
               href="https://github.com/ShantoNoor"
               title="GitHub"
               target="_blank"
-              className="slide-from-right focus:ring hover:ring focus:ri hover:ri flex items-center justify-center w-10 h-10 rounded-full bg-primary text-gray-50   dark:text-gray-900"
+              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full bg-primary text-gray-50   dark:text-gray-900"
             >
               <Github className="w-5 h-5" />
             </a>

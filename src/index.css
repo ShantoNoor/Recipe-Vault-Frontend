@@ -57,3 +57,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+.clip-path {
+  clip-path: polygon(0 0, 30% 0, 70% 100%, 0 180%);
+}
+@media (max-width: 1024px) {  
+  .clip-path {
+    clip-path: none;
+  }
+}
