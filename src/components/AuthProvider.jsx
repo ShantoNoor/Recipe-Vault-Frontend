@@ -1,9 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import app from "@/lib/firebase.config.js";
 import {
   GoogleAuthProvider,
   getAuth,
-  onAuthStateChanged,
   signInWithPopup,
   signOut as _signOut,
 } from "firebase/auth";
@@ -18,28 +17,6 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser?.email) {
-        try {
-          const userInfo = await axiosPublic.get(
-            `/users?email=${currentUser?.email}`
-          );
-          setUser(userInfo.data[0]);
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        setUser(null);
-      }
-      setLoading(false);
-    });
-
-    return () => {
-      unSubscribe();
-    };
-  }, [setUser, setLoading]);
-
   const googleProvider = new GoogleAuthProvider();
   const popUpSignIn = (provider) => {
     setLoading(true);
@@ -52,7 +29,9 @@ const AuthProvider = ({ children }) => {
         loading: "Loading, Please wait ...",
         success: () => {
           resolve(true);
-          return "Logout successfull!";
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          return "Logout successful!";
         },
         error: (err) => {
           reject(false);
@@ -65,7 +44,7 @@ const AuthProvider = ({ children }) => {
 
   const popUp = (media) => {
     setLoading(true);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       toast.promise(popUpSignIn(media), {
         loading: "Loading, Please wait ...",
         success: (res) => {
@@ -78,16 +57,30 @@ const AuthProvider = ({ children }) => {
             axiosPublic
               .post("/users", data)
               .then((res) => {
-                setUser(res.data);
-                resolve(res.data);
-                toast.success(`Welcome ${res.data.displayName} !`);
+                axiosPublic
+                  .post(`/jwt`, {
+                    email: data?.email,
+                  })
+                  .then((result) => {
+                    setUser(res.data);
+                    resolve(res.data);
+                    toast.success(`Welcome ${res.data.displayName} !`);
+                    
+                    const { accessToken, refreshToken } = result.data;
+                    localStorage.setItem("accessToken", accessToken);
+                    localStorage.setItem("refreshToken", refreshToken);
+                  })
+                  .catch((err) => {
+                    toast.error("Unable to get access token");
+                    toast.error(err.message);
+                  });
               })
               .catch((err) => {
                 toast.error("Something went wrong");
                 toast.error(err.message);
               });
           }
-          return "Login Successfull!";
+          return "Login Successful!";
         },
         error: (err) => {
           toast.error("Failed To Login");
@@ -108,6 +101,7 @@ const AuthProvider = ({ children }) => {
         setUser,
         signOut,
         loading,
+        setLoading,
       }}
     >
       {children}

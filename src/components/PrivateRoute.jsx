@@ -9,7 +9,7 @@ const PrivateRoute = ({ children }) => {
 
   if (loading) return <Spinner />;
   if (user) return children;
-  toast.info("You need to login using google account!")
+  toast.info("Action requires login using google account!")
   return <Navigate to="/" state={{ ...state, pathname }} replace={true} />;
 };
 
