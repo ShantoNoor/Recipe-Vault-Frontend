@@ -15,6 +15,7 @@ import AddRecipe from "./pages/AddRecipe.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import Spinner from "./components/Spinner.jsx";
 import { Toaster } from "./components/ui/sonner.jsx";
+import PurchaseCoin from "./pages/PurchaseCoin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
             <AddRecipe />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/purchase-coin",
+        element: <PurchaseCoin />,
       },
     ],
   },

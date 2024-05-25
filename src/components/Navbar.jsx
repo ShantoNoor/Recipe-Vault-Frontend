@@ -38,11 +38,11 @@ const NLink = ({ children, className, ...props }) => (
         : isActive
         ? cn(
             className,
-            "active transition-colors text-foreground/90 border px-4 py-[0.35rem] rounded-md"
+            "active transition-colors text-foreground/90 border px-4 py-[0.35rem] rounded-md min-w-fit"
           )
         : cn(
             className,
-            "transition-colors text-foreground/90 border px-4 py-[0.35rem] rounded-md border-transparent hover:border-accent"
+            "transition-colors text-foreground/90 border px-4 py-[0.35rem] rounded-md border-transparent hover:border-accent  min-w-fit"
           )
     }
   >
@@ -57,6 +57,7 @@ const Navbar = () => {
   const links = [
     { text: "Home", to: "/" },
     { text: "Recipes", to: "/recipes" },
+    { text: "Purchase Coin", to: "/purchase-coin"}
   ];
 
   return (
