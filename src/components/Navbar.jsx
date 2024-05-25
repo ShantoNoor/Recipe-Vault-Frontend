@@ -1,4 +1,4 @@
-import { CircleUser, Menu } from "lucide-react";
+import { CircleUser, Coins, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { Separator } from "./ui/separator";
+import { Badge } from "./ui/badge";
 
 const GoogleIcon = () => (
   <svg
@@ -122,46 +123,54 @@ const Navbar = () => {
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <div className="flex-1" />
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full"
-                >
-                  {user ? (
+            <>
+              <Badge variant="outline" className="rounded-md h-9 flex items-center gap-1 text-primary">
+                <Coins /> {user.coin}
+              </Badge>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="rounded-full"
+                  >
                     <Avatar className="size-9">
-                      <AvatarImage src={user.photoURL} className="object-cover" />
+                      <AvatarImage
+                        src={user.photoURL}
+                        className="object-cover"
+                      />
                       <AvatarFallback>
                         {user.displayName[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                  ) : (
-                    <CircleUser className="size-5" />
-                  )}
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user.displayName}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <Link to="/add-recipe">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Add Recipe
+                    <span className="sr-only">Toggle user menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel className="flex flex-col gap-1 items-center justify-center">
+                    <span>{user.displayName}</span>
+                    <Separator />
+                    <Badge className="">Coins: {user.coin}</Badge>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <Link to="/add-recipe">
+                    <DropdownMenuItem className="cursor-pointer">
+                      Add Recipe
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={async () => {
+                      await signOut();
+                      navigate("/");
+                    }}
+                  >
+                    Logout
                   </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={async () => {
-                    await signOut();
-                    navigate("/");
-                  }}
-                >
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : (
             <Button
               variant="outline"
