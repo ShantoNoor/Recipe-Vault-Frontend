@@ -1,4 +1,4 @@
-import { CircleUser, Coins, Menu } from "lucide-react";
+import { Coins, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
