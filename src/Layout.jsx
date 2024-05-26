@@ -22,7 +22,7 @@ const Layout = () => {
           );
           setUser(userInfo.data[0]);
         } catch (err) {
-          console.error(err);
+          // console.error(err);
         }
       } else {
         setUser(null);

@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const CheckoutForm = ({ payRef, update, setOpen }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { user, setUser } = useAuth();
+  const { setUser } = useAuth();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
@@ -44,7 +44,6 @@ const CheckoutForm = ({ payRef, update, setOpen }) => {
         const reqBody = {
           payment_amount: update?.price,
           tnxid: result.paymentIntent.id,
-          email: user.email,
         };
 
         const purchase_result = await axiosSecure.post(

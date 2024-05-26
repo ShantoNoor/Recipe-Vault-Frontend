@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import { toast } from "sonner";
 
-const baseURL = import.meta.env.PROD ? "" : "http://localhost:3000";
+const baseURL = import.meta.env.PROD ? "https://recipe-vaultt-backend.vercel.app" : "http://localhost:3000";
 
 const axiosPublic = axios.create({
   baseURL,
@@ -11,7 +11,7 @@ const axiosPublic = axios.create({
 
 export const useAxiosSecure = () => {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   const axiosSecure = axios.create({
     baseURL,
@@ -21,6 +21,14 @@ export const useAxiosSecure = () => {
     function (config) {
       const token = localStorage.getItem("accessToken");
       config.headers.authorization = `Bearer ${token}`;
+
+      if (config.method === 'post' || config.method === 'put' || config.method === 'patch') {
+        if (config.data) {
+          config.data.email = user?.email; 
+        } else {
+          config.data = { email: user?.email }; 
+        }
+      }
       return config;
     },
     function (error) {
@@ -35,7 +43,7 @@ export const useAxiosSecure = () => {
     async (error) => {
       const originalRequest = error.config;
       const status = error.response.status;
-      if (status === 401 || status === 403) {
+      if ((status === 401 || status === 403) && !originalRequest._retry) {
         try {
           const newTokens = await axiosPublic.post("/refresh-token", {
             refreshToken: localStorage.getItem("refreshToken"),

@@ -16,7 +16,7 @@ import AvatarUpload from "@/components/AvatarUpload";
 import useAuth from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import photoUploader from "@/lib/photoUploader";
-import axiosPublic from "@/hooks/useAxios";
+import { useAxiosSecure } from "@/hooks/useAxios";
 import { Textarea } from "@/components/ui/textarea";
 import {
   PageHeader,
@@ -104,9 +104,10 @@ const steps = [
 
 const AddRecipe = () => {
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const [previousStep, setPreviousStep] = useState(0);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(0);
   const delta = currentStep - previousStep;
 
   const [openCategories, setOpenCategories] = useState(false);
@@ -151,20 +152,23 @@ const AddRecipe = () => {
 
   const processForm = (data) => {
     setLoading(true);
-    toast.promise(axiosPublic.post(`/recipes`, data), {
-      loading: "Adding recipe, Please wait ...",
-      success: () => {
-        reset();
-        setLoading(false);
-        return "Recipe added successfully";
-      },
-      error: (err) => {
-        setLoading(false);
-        setCurrentStep(2);
-        toast.error("Failed to add recipe");
-        return err.message;
-      },
-    });
+    toast.promise(
+      axiosSecure.post(`/recipes`, data),
+      {
+        loading: "Adding recipe, Please wait ...",
+        success: () => {
+          reset();
+          setLoading(false);
+          return "Recipe added successfully";
+        },
+        error: (err) => {
+          setLoading(false);
+          setCurrentStep(2);
+          toast.error("Failed to add recipe");
+          return err.message;
+        },
+      }
+    );
   };
 
   const next = async () => {
@@ -438,7 +442,7 @@ const AddRecipe = () => {
                       render={({ fields }) => (
                         <FormItem>
                           <FormLabel>
-                            How long does it take to perpare the recipe?
+                            How long does it take to prepare the recipe?
                           </FormLabel>
                           <FormControl>
                             <Slider
