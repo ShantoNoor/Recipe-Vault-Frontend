@@ -4,7 +4,7 @@ import { BounceLoader } from "react-spinners";
 const Spinner = () => {
   const {currentTheme} = useTheme();
   return (
-    <div className="flex mt-6 justify-center">
+    <div className="flex justify-center">
       <BounceLoader color={currentTheme === "light" ? "#f97316" : "#ea580c"} />
     </div>
   );

@@ -1,5 +1,5 @@
 import Spinner from "@/components/Spinner";
-import axiosPublic from "@/hooks/useAxios";
+import axiosPublic, { useAxiosSecure } from "@/hooks/useAxios";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import {
@@ -34,14 +34,31 @@ const countries = ["italian", "chinese", "indian", "mexican", "japanese"];
 import categoriesJson from "../pages/AddRecipe/data/categories.json";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useDebounce from "@/hooks/useDebounce";
+import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
 const categories = categoriesJson.map((category) => category.name);
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 const Recipes = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [disableNavigation, setDisableNavigation] = useState(false);
+  const axiosSecure = useAxiosSecure();
+
+  const [open, setOpen] = useState(false);
+  const [update, setUpdate] = useState(null);
 
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 750)
+  const debouncedSearch = useDebounce(search, 750);
 
   const [country, setCountry] = useState("");
   const [category, setCategory] = useState("");
@@ -95,11 +112,7 @@ const Recipes = () => {
             <Select
               value={country}
               onValueChange={(value) => {
-                setDisableNavigation(true);
                 setCountry(value);
-                setTimeout(() => {
-                  setDisableNavigation(false);
-                }, 500);
               }}
               defaultValue={country[0]}
             >
@@ -130,11 +143,7 @@ const Recipes = () => {
             <Select
               value={category}
               onValueChange={(value) => {
-                setDisableNavigation(true);
                 setCategory(value);
-                setTimeout(() => {
-                  setDisableNavigation(false);
-                }, 500);
               }}
               defaultValue={categories[0]}
             >
@@ -179,6 +188,7 @@ const Recipes = () => {
         next={() => fetchNextPage()}
         hasMore={hasNextPage}
         loading={<div>Loading ....</div>}
+        style={{ overflowY: "hidden" }}
       >
         <div className="grid grid-cols-1 gap-6 mb-6">
           {recipes.map((recipe) => (
@@ -247,10 +257,38 @@ const Recipes = () => {
 
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      !disableNavigation &&
-                      navigate(`/view-recipe/${recipe._id}`)
-                    }
+                    onClick={() => {
+                      const email = user?.email;
+                      if (!email) {
+                        toast.info(
+                          "Action requires login using google account!"
+                        );
+                        return;
+                      } else {
+                        if (
+                          email === recipe.author.email ||
+                          recipe.purchasedBy.includes(email)
+                        ) {
+                          return navigate(`/view-recipe/${recipe._id}`);
+                        }
+
+                        if (user.coin < 10) {
+                          return navigate(`/purchase-coin`);
+                        }
+
+                        if (user.coin > 10) {
+                          //show alert
+                          setOpen(true);
+
+                          // set ids for update
+                          setUpdate({
+                            user_id: user._id,
+                            recipe_id: recipe._id,
+                            author_id: recipe.author._id,
+                          });
+                        }
+                      }
+                    }}
                   >
                     View The Recipe
                   </Button>
@@ -260,6 +298,34 @@ const Recipes = () => {
           ))}
         </div>
       </InfiniteScroll>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action is permanent and will add the recipe to your account
+              for 10 coins.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                //buy the recipe & update coins
+                const res = await axiosSecure.post("/buy-recipe", update);
+
+                //redirect to recipe page
+                if (res.data === "success") {
+                  toast.success("Recipe added to your account!");
+                  navigate(`/view-recipe/${update.recipe_id}`);
+                }
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

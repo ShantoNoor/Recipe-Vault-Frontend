@@ -13,9 +13,9 @@ import PrivateRoute from "./components/PrivateRoute.jsx";
 import Spinner from "./components/Spinner.jsx";
 import { Toaster } from "./components/ui/sonner.jsx";
 
-// TODO: Publish frontend and backend
 const Home = React.lazy(() => import("./pages/Home.jsx"));
 const Recipes = React.lazy(() => import("./pages/Recipes.jsx"));
+const ViewRecipe = React.lazy(() => import("./pages/ViewRecipe.jsx"));
 const AddRecipe = React.lazy(() => import("./pages/AddRecipe/AddRecipe.jsx"));
 const PurchaseCoin = React.lazy(() => import("./pages/PurchaseCoin.jsx"));
 
@@ -45,6 +45,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <PurchaseCoin />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "view-recipe/:_id",
+        element: (
+          <PrivateRoute>
+            <ViewRecipe />
           </PrivateRoute>
         ),
       },
