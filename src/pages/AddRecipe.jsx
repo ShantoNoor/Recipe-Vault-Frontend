@@ -3,7 +3,7 @@ import Title from "@/components/Title";
 const AddRecipe = () => {
   return (
     <>
-      <Title>Add Recipe</Title>
+      <Title>Add Recipes</Title>
       <div>AddRecipe</div>
     </>
   );

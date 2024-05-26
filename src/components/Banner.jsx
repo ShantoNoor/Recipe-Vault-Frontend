@@ -7,7 +7,7 @@ import useTheme from "@/hooks/useTheme";
 const Banner = () => {
   const navigate = useNavigate();
   const { user, googlePopUp } = useAuth();
-  const {currentTheme} = useTheme()
+  const { currentTheme } = useTheme();
   return (
     <section
       className={`relative overflow-hidden bg-no-repeat bg-cover bg-center rounded-lg bg-[url("https://c1.wallpaperflare.com/preview/743/182/516/ingredients-cooking-preparation-spices.jpg")]`}
@@ -19,7 +19,9 @@ const Banner = () => {
           duration: 0.5,
           bounce: 2,
         }}
-        className={`inset-0 clip-path absolute bg-gradient-to-r ${currentTheme === 'light' ? 'from-rose-100/90' : 'from-rose-900/90'} to-orange-500/30`}
+        className={`inset-0 clip-path absolute bg-gradient-to-r ${
+          currentTheme === "light" ? "from-rose-100/90" : "from-rose-900/90"
+        } to-orange-500/30`}
       />
       <motion.div
         initial={{ x: "-250%" }}
@@ -33,7 +35,7 @@ const Banner = () => {
           </h1>
           <p className="mt-6 mb-8 text-lg sm:mb-12">
             Unlock a world of culinary treasures. <br /> Unveiling flavors, one
-            recipe at a time.  Discover your next favorite dish in Recipe Vault.
+            recipe at a time. Discover your next favorite dish in Recipe Vault.
           </p>
           <motion.div
             initial={{ x: "-250%" }}
@@ -60,7 +62,7 @@ const Banner = () => {
                 }
               }}
             >
-              Add Recipes
+              Add Recipess
             </Button>
           </motion.div>
         </div>

@@ -19,7 +19,7 @@ const PaymentDialog = ({ open, setOpen, update, gettingIntent, clientSecret }) =
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogTitle>{`Pay to proceed: ${update?.price * 100} coins for ${update?.price}$`}</DialogTitle>
           </DialogHeader>
           {gettingIntent === false && clientSecret ? (
             <Elements

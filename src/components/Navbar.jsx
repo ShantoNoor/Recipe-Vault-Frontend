@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
+import { useEffect, useState } from "react";
 
 const GoogleIcon = () => (
   <svg
@@ -50,15 +51,29 @@ const NLink = ({ children, className, ...props }) => (
   </NavLink>
 );
 
+const publicLinks = [
+  { text: "Home", to: "/" },
+  { text: "Recipes", to: "/recipes" },
+];
+
+const privateLinks = [
+  { text: "Add Recipes", to: "/add-recipe" },
+  // { text: "Purchase Coins", to: "/purchase-coin" },
+];
+
 const Navbar = () => {
   const { user, signOut, googlePopUp } = useAuth();
   const navigate = useNavigate();
 
-  const links = [
-    { text: "Home", to: "/" },
-    { text: "Recipes", to: "/recipes" },
-    { text: "Purchase Coin", to: "/purchase-coin"}
-  ];
+  const [links, setLinks] = useState(publicLinks);
+
+  useEffect(() => {
+    if (user) {
+      setLinks([...publicLinks, ...privateLinks]);
+    } else {
+      setLinks(publicLinks);
+    }
+  }, [user, setLinks]);
 
   return (
     <>
@@ -125,9 +140,14 @@ const Navbar = () => {
           <div className="flex-1" />
           {user ? (
             <>
-              <Badge variant="outline" className="rounded-md h-9 flex items-center gap-1 text-primary">
-                <Coins /> {user.coin}
-              </Badge>
+              <Link to="/purchase-coin">
+                <Badge
+                  variant="outline"
+                  className="rounded-md h-9 flex items-center gap-1 text-primary cursor-pointer"
+                >
+                  <Coins /> {user.coin}
+                </Badge>
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -156,7 +176,13 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <Link to="/add-recipe">
                     <DropdownMenuItem className="cursor-pointer">
-                      Add Recipe
+                      Add Recipes
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                  <Link to="/purchase-coin">
+                    <DropdownMenuItem className="cursor-pointer">
+                      Purchase Coins
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuSeparator />

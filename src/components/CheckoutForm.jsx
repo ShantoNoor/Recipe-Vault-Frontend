@@ -40,8 +40,7 @@ const CheckoutForm = ({ payRef, update, setOpen }) => {
       const id = toast.loading("Updating, wait ....");
       try {
         const reqBody = {
-          _id: update._id,
-          payment_amount: update.price,
+          payment_amount: update?.price,
           tnxid: result.paymentIntent.id,
           email: user.email,
         };
@@ -68,7 +67,7 @@ const CheckoutForm = ({ payRef, update, setOpen }) => {
     <form onSubmit={handleSubmit} ref={payRef}>
       <PaymentElement />
       <Button type="submit" className="mt-5 ml-auto block">
-        {`Pay ${update.price} $`}
+        Pay
       </Button>
     </form>
   );
