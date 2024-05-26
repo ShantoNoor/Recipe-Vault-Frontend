@@ -7,12 +7,14 @@ import { useAxiosSecure } from "@/hooks/useAxios";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import useAuth from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = ({ payRef, update, setOpen }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { user, setUser } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -50,9 +52,11 @@ const CheckoutForm = ({ payRef, update, setOpen }) => {
           reqBody
         );
         setUser(purchase_result.data);
-        
+
         toast.dismiss(id);
         toast.success("Update Successful");
+
+        navigate("/recipes"); // TODO: take state when navigate
       } catch (err) {
         console.error(err);
         toast.dismiss(id);

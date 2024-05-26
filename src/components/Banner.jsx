@@ -62,7 +62,7 @@ const Banner = () => {
                 }
               }}
             >
-              Add Recipess
+              Add Recipes
             </Button>
           </motion.div>
         </div>

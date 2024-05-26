@@ -28,7 +28,7 @@ const Footer = () => {
               href="https://www.linkedin.com/in/shantonoor/"
               title="Email"
               target="_blank"
-              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white"
+              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white hover:rotate-12 duration-300"
             >
               <Linkedin className="w-5 h-5" />
             </a>
@@ -37,7 +37,7 @@ const Footer = () => {
               href="https://www.facebook.com/ShantoN00R/"
               title="Facebook"
               target="_blank"
-              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full sm:w-10 sm:h-10 bg-primary text-white"
+              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full sm:w-10 sm:h-10 bg-primary text-white hover:rotate-12 duration-300"
             >
               <Facebook className="w-5 h-5" />
             </a>
@@ -47,7 +47,7 @@ const Footer = () => {
               href="https://github.com/ShantoNoor"
               title="GitHub"
               target="_blank"
-              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white"
+              className="slide-from-right flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white hover:rotate-12 duration-300"
             >
               <Github className="w-5 h-5" />
             </a>
