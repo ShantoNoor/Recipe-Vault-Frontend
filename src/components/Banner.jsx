@@ -7,7 +7,10 @@ const Banner = () => {
   const navigate = useNavigate();
   const { user, googlePopUp } = useAuth();
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
       className={`relative overflow-hidden bg-no-repeat bg-cover bg-center rounded-lg bg-[url("https://c1.wallpaperflare.com/preview/743/182/516/ingredients-cooking-preparation-spices.jpg")]`}
     >
       <motion.div
@@ -64,7 +67,7 @@ const Banner = () => {
         </div>
         <div className="flex items-center justify-center p-6 lg:mt-0 "></div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 };
 
