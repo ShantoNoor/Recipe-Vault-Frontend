@@ -2,12 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import useAuth from "@/hooks/useAuth";
-import useTheme from "@/hooks/useTheme";
 
 const Banner = () => {
   const navigate = useNavigate();
   const { user, googlePopUp } = useAuth();
-  const { currentTheme } = useTheme();
   return (
     <section
       className={`relative overflow-hidden bg-no-repeat bg-cover bg-center rounded-lg bg-[url("https://c1.wallpaperflare.com/preview/743/182/516/ingredients-cooking-preparation-spices.jpg")]`}
@@ -19,9 +17,7 @@ const Banner = () => {
           duration: 0.5,
           bounce: 2,
         }}
-        className={`inset-0 clip-path absolute bg-gradient-to-r ${
-          currentTheme === "light" ? "from-rose-100/90" : "from-rose-900/90"
-        } to-orange-500/30`}
+        className={`inset-0 clip-path absolute bg-gradient-to-r from-rose-900/90 to-orange-500/30`}
       />
       <motion.div
         initial={{ x: "-250%" }}
@@ -30,10 +26,10 @@ const Banner = () => {
         className="container flex flex-col justify-center p-6 mx-auto sm:py-12 lg:py-24 lg:flex-row lg:justify-between"
       >
         <div className="z-[1] flex flex-col justify-center p-6 text-center rounded-sm lg:max-w-md xl:max-w-lg lg:text-left">
-          <h1 className="text-3xl font-bold leadi md:text-5xl">
+          <h1 className="text-3xl font-bold leadi md:text-5xl text-white">
             <span className="text-primary">Recipe</span>Vault {":)"}
           </h1>
-          <p className="mt-6 mb-8 text-lg sm:mb-12">
+          <p className="mt-6 mb-8 text-lg sm:mb-12 text-white">
             Unlock a world of culinary treasures. <br /> Unveiling flavors, one
             recipe at a time. Discover your next favorite dish in Recipe Vault.
           </p>

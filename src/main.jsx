@@ -16,7 +16,7 @@ import { Toaster } from "./components/ui/sonner.jsx";
 // TODO: Publish frontend and backend
 const Home = React.lazy(() => import("./pages/Home.jsx"));
 const Recipes = React.lazy(() => import("./pages/Recipes.jsx"));
-const AddRecipe = React.lazy(() => import("./pages/AddRecipe.jsx"));
+const AddRecipe = React.lazy(() => import("./pages/AddRecipe/AddRecipe.jsx"));
 const PurchaseCoin = React.lazy(() => import("./pages/PurchaseCoin.jsx"));
 
 const router = createBrowserRouter([
