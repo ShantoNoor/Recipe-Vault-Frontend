@@ -8,14 +8,16 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthProvider from "./components/AuthProvider.jsx";
-import Recipes from "./pages/Recipes.jsx";
-import Home from "./pages/Home.jsx";
 import { ThemeProvider } from "./components/ui/theme-provider.jsx";
-import AddRecipe from "./pages/AddRecipe.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import Spinner from "./components/Spinner.jsx";
 import { Toaster } from "./components/ui/sonner.jsx";
-import PurchaseCoin from "./pages/PurchaseCoin.jsx";
+
+// TODO: Publish frontend and backend
+const Home = React.lazy(() => import("./pages/Home.jsx"));
+const Recipes = React.lazy(() => import("./pages/Recipes.jsx"));
+const AddRecipe = React.lazy(() => import("./pages/AddRecipe.jsx"));
+const PurchaseCoin = React.lazy(() => import("./pages/PurchaseCoin.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -40,7 +42,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/purchase-coin",
-        element: <PurchaseCoin />,
+        element: (
+          <PrivateRoute>
+            <PurchaseCoin />
+          </PrivateRoute>
+        ),
       },
     ],
   },
