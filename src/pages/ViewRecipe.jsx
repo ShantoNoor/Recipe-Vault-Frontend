@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import Title from "@/components/Title";
 import { motion } from "framer-motion";
+import { EyeIcon, Heart } from "lucide-react";
+import getVideoId from "@/lib/getVideoId";
 
 const MotionCard = motion(Card);
 
@@ -39,6 +41,8 @@ const ViewRecipe = () => {
     },
   });
 
+  console.log(recipe);
+
   if (isPending) return <Spinner />;
   if (error) return "An error has occurred: " + error.message;
 
@@ -62,16 +66,27 @@ const ViewRecipe = () => {
                   <Image
                     src={recipe?.author.photoURL}
                     alt={recipe?.author.displayName}
-                    className="w-4 h-4 border rounded-full"
+                    className="size-10 border rounded-full"
                   />
-                  <p className="text-sm">• {recipe?.author.displayName}</p>
+                  <span className="flex flex-col text-sm">
+                    <span className="">• {recipe?.author.displayName}</span>
+                    <span className="">• {recipe?.author.email}</span>
+                  </span>
                 </div>
                 <div className="flex-shrink-0 mt-3 text-sm md:mt-0 relative">
                   <Separator
                     className="absolute -left-7"
                     orientation="vertical"
                   />
-                  • Cooking Time: {minutesToHoursAndMinutes(recipe.cookTime)}
+                  <span className="flex flex-col ">
+                    <span className="">
+                      • Cooking Time:{" "}
+                      {minutesToHoursAndMinutes(recipe.cookTime)}
+                    </span>
+                    <span className="">
+                      • Purchased By: {recipe.purchasedBy.length} people
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -117,6 +132,75 @@ const ViewRecipe = () => {
                 className="px-2 py-1 rounded bg-primary capitalize text-white"
               >
                 # {recipe.category}
+              </MotionCard>
+              <MotionCard
+                className="px-2 py-1 rounded bg-primary capitalize text-white"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.5,
+                    delay: 0.15 * 1,
+                  },
+                }}
+                whileHover={{
+                  translateY: -10,
+                }}
+                whileTap={{
+                  translateY: -5,
+                }}
+              >
+                # {recipe.country}
+              </MotionCard>
+
+              <MotionCard
+                initial={{ opacity: 0, y: 30 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.5,
+                    delay: 0.15 * 2,
+                  },
+                }}
+                whileHover={{
+                  translateY: -10,
+                }}
+                whileTap={{
+                  translateY: -5,
+                }}
+                className="px-2 py-1 rounded bg-primary text-white"
+              >
+                <span className="flex justify-center items-center gap-1">
+                  <EyeIcon className="size-5" />{" "}
+                  <span>Watch ({recipe.watchCount})</span>
+                </span>
+              </MotionCard>
+
+              <MotionCard
+                initial={{ opacity: 0, y: 30 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.5,
+                    delay: 0.15 * 3,
+                  },
+                }}
+                whileHover={{
+                  translateY: -10,
+                }}
+                whileTap={{
+                  translateY: -5,
+                }}
+                // onClick={addToFavorite}
+                className="px-2 py-1 rounded bg-primary cursor-pointer text-white"
+              >
+                <span className="flex justify-center items-center gap-1">
+                  <Heart className="size-5" fill="red" />{" "}
+                  <span>Like ({recipe.likes.length})</span>
+                </span>
               </MotionCard>
             </div>
 
@@ -168,6 +252,27 @@ const ViewRecipe = () => {
                   );
                 })}
               </motion.div>
+            </div>
+          </div>
+          <div className="space-y-3 px-4">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Instruction Video
+              </h2>
+              <Separator />
+              <div className="w-full flex justify-center items-center mx-auto aspect-video bg-muted text-destructive font-semibold text-xl rounded-md overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${getVideoId(
+                    recipe.video
+                  )}`}
+                  title="YouTube Video Player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                ></iframe>
+              </div>
             </div>
           </div>
         </motion.div>

@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import { toast } from "sonner";
 
-const baseURL = import.meta.env.PROD ? "https://recipe-vaultt-backend.vercel.app" : "http://localhost:3000";
+const baseURL = import.meta.env.PROD
+  ? "https://recipe-vaultt-backend.vercel.app"
+  : "http://localhost:3000";
 
 const axiosPublic = axios.create({
   baseURL,
@@ -22,11 +24,15 @@ export const useAxiosSecure = () => {
       const token = localStorage.getItem("accessToken");
       config.headers.authorization = `Bearer ${token}`;
 
-      if (config.method === 'post' || config.method === 'put' || config.method === 'patch') {
+      if (
+        config.method === "post" ||
+        config.method === "put" ||
+        config.method === "patch"
+      ) {
         if (config.data) {
-          config.data.email = user?.email; 
+          config.data.email = user?.email;
         } else {
-          config.data = { email: user?.email }; 
+          config.data = { email: user?.email };
         }
       }
       return config;
@@ -44,17 +50,20 @@ export const useAxiosSecure = () => {
       const originalRequest = error.config;
       const status = error.response.status;
       if ((status === 401 || status === 403) && !originalRequest._retry) {
+        originalRequest._retry = true;
+
         try {
           const newTokens = await axiosPublic.post("/refresh-token", {
             refreshToken: localStorage.getItem("refreshToken"),
           });
 
-          const { accessToken, refreshToken } = newTokens.data;
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+            newTokens.data;
+          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
 
-          originalRequest._retry = true;
-          return await axiosSecure(originalRequest);
+          originalRequest.headers.authorization = `Bearer ${newAccessToken}`;
+          return axiosSecure(originalRequest);
         } catch (err) {
           await signOut();
           navigate("/");
