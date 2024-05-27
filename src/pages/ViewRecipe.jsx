@@ -17,19 +17,23 @@ import Title from "@/components/Title";
 import { motion } from "framer-motion";
 import { EyeIcon, Heart } from "lucide-react";
 import getVideoId from "@/lib/getVideoId";
+import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const MotionCard = motion(Card);
 
 const ViewRecipe = () => {
   const { _id } = useParams();
   const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
 
   const {
     data: recipe,
     error,
     isPending,
+    refetch,
   } = useQuery({
-    queryKey: ["recipes", `_id=${_id}`],
+    queryKey: ["recipes", _id],
     enabled: !!_id,
     queryFn: async () => {
       try {
@@ -40,8 +44,6 @@ const ViewRecipe = () => {
       }
     },
   });
-
-  console.log(recipe);
 
   if (isPending) return <Spinner />;
   if (error) return "An error has occurred: " + error.message;
@@ -194,11 +196,29 @@ const ViewRecipe = () => {
                 whileTap={{
                   translateY: -5,
                 }}
-                // onClick={addToFavorite}
+                onClick={async () => {
+                  toast.promise(
+                    axiosSecure.post(`/like`, {
+                      user_id: user._id,
+                      recipe_id: recipe._id,
+                    }),
+                    {
+                      loading: "Updating like, Please wait ...",
+                      success: "Like updated successfully",
+                      error: "Failed to updated like",
+                    }
+                  );
+                  await refetch();
+                  await refetch();
+                  await refetch();
+                }}
                 className="px-2 py-1 rounded bg-primary cursor-pointer text-white"
               >
                 <span className="flex justify-center items-center gap-1">
-                  <Heart className="size-5" fill="red" />{" "}
+                  <Heart
+                    className="size-5"
+                    fill={recipe.likes.includes(user.email) ? "red" : "none"}
+                  />{" "}
                   <span>Like ({recipe.likes.length})</span>
                 </span>
               </MotionCard>
