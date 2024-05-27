@@ -19,14 +19,29 @@ import { EyeIcon, Heart } from "lucide-react";
 import getVideoId from "@/lib/getVideoId";
 import useAuth from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const MotionCard = motion(Card);
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ViewRecipe = () => {
   const { _id } = useParams();
   const axiosSecure = useAxiosSecure();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+  const [update, setUpdate] = useState(null);
 
   const {
     data: recipe,
@@ -53,7 +68,7 @@ const ViewRecipe = () => {
         const result = await axiosPublic.get(
           `/all-recipes?limit=4&country=${recipe?.country}&category=${recipe?.category}`
         );
-        return result.data.recipes;
+        return result.data.recipes.filter((reci) => reci._id !== recipe._id);
       } catch (err) {
         console.error("Error fetching recipes:", err);
       }
@@ -303,10 +318,6 @@ const ViewRecipe = () => {
                   src={`https://www.youtube.com/embed/${getVideoId(
                     recipe.video
                   )}`}
-                  title="YouTube Video Player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
                 ></iframe>
               </div>
             </div>
@@ -322,20 +333,51 @@ const ViewRecipe = () => {
                 <div>Sorry, unable to find any good Suggestions</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                  {suggestions?.map((recipe, idx) => (
+                  {suggestions?.map((suggestionRecipe, idx) => (
                     <Card
-                      onClick={() => navigate(`/view-recipe/${recipe._id}`)}
+                      onClick={() => {
+                        const email = user?.email;
+                        if (!email) {
+                          toast.info(
+                            "Action requires login using google account!"
+                          );
+                          return;
+                        } else {
+                          if (
+                            email === suggestionRecipe.author.email ||
+                            suggestionRecipe.purchasedBy.includes(email)
+                          ) {
+                            return navigate(`/view-recipe/${suggestionRecipe._id}`);
+                          }
+
+                          if (user?.coin < 10) {
+                            return navigate(`/purchase-coin`);
+                          }
+
+                          if (user?.coin > 10) {
+                            //show alert
+                            setOpen(true);
+
+                            // set ids for update
+                            setUpdate({
+                              user_id: user?._id,
+                              recipe_id: suggestionRecipe._id,
+                              author_id: suggestionRecipe.author._id,
+                            });
+                          }
+                        }
+                      }}
                       key={idx}
                       className="flex flex-col overflow-hidden rounded-lg shadow-md cursor-pointer"
                     >
                       <CardContent className="p-4">
                         <Image
-                          src={recipe.image}
-                          alt={recipe.name}
+                          src={suggestionRecipe.image}
+                          alt={suggestionRecipe.name}
                           className="object-cover aspect-square w-full mb-4 rounded-md"
                         />
                         <CardTitle className="mb-1 text-xl font-semibold">
-                          {recipe.name}
+                          {suggestionRecipe.name}
                         </CardTitle>
                       </CardContent>
                     </Card>
@@ -355,6 +397,37 @@ const ViewRecipe = () => {
           <ShowIngredients recipe={recipe} />
         </motion.div>
       </article>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action is permanent and will add the recipe to your account
+              for 10 coins.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                //buy the recipe & update coins
+                const res = await axiosSecure.post("/buy-recipe", update);
+
+                //redirect to recipe page
+                if (res.data === "success") {
+                  toast.success("Recipe added to your account!");
+                  const newUser = { ...user };
+                  newUser.coin = newUser.coin - 10;
+                  setUser(newUser);
+                  navigate(`/view-recipe/${update.recipe_id}`);
+                }
+              }}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

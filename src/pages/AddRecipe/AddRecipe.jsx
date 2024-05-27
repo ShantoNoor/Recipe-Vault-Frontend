@@ -607,10 +607,6 @@ const AddRecipe = () => {
                           src={`https://www.youtube.com/embed/${getVideoId(
                             watch("video")
                           )}`}
-                          title="YouTube Video Player"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          referrerPolicy="strict-origin-when-cross-origin"
                         ></iframe>
                       )}
                     </div>
