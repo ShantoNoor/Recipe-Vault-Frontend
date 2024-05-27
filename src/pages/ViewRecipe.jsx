@@ -1,10 +1,10 @@
 import Image from "@/components/Image";
 import Spinner from "@/components/Spinner";
 import { Separator } from "@/components/ui/separator";
-import { useAxiosSecure } from "@/hooks/useAxios";
+import axiosPublic, { useAxiosSecure } from "@/hooks/useAxios";
 import minutesToHoursAndMinutes from "@/lib/minutesToHoursAndMinutes";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Card,
@@ -26,6 +26,7 @@ const ViewRecipe = () => {
   const { _id } = useParams();
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const {
     data: recipe,
@@ -43,6 +44,21 @@ const ViewRecipe = () => {
         console.error("Error fetching recipes:", err);
       }
     },
+  });
+
+  const { data: suggestions } = useQuery({
+    queryKey: ["suggestions", recipe?._id],
+    queryFn: async () => {
+      try {
+        const result = await axiosPublic.get(
+          `/all-recipes?limit=4&country=${recipe?.country}&category=${recipe?.category}`
+        );
+        return result.data.recipes;
+      } catch (err) {
+        console.error("Error fetching recipes:", err);
+      }
+    },
+    enabled: !!recipe,
   });
 
   if (isPending) return <Spinner />;
@@ -295,6 +311,39 @@ const ViewRecipe = () => {
               </div>
             </div>
           </div>
+          <div className="space-y-3 px-4 mt-8">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Recipe Suggestions
+              </h2>
+              <Separator />
+
+              {suggestions?.length === 0 ? (
+                <div>Sorry, unable to find any good Suggestions</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                  {suggestions?.map((recipe, idx) => (
+                    <Card
+                      onClick={() => navigate(`/view-recipe/${recipe._id}`)}
+                      key={idx}
+                      className="flex flex-col overflow-hidden rounded-lg shadow-md cursor-pointer"
+                    >
+                      <CardContent className="p-4">
+                        <Image
+                          src={recipe.image}
+                          alt={recipe.name}
+                          className="object-cover aspect-square w-full mb-4 rounded-md"
+                        />
+                        <CardTitle className="mb-1 text-xl font-semibold">
+                          {recipe.name}
+                        </CardTitle>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -314,50 +363,52 @@ export default ViewRecipe;
 
 function ShowIngredients({ recipe }) {
   return (
-    <div className="space-y-3">
-      <div className="space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">{`Ingredients (${recipe.ingredients.length})`}</h2>
-        <Separator />
-      </div>
+    <>
+      <div className="space-y-3">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold tracking-tight">{`Ingredients (${recipe.ingredients.length})`}</h2>
+          <Separator />
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-3">
-        {recipe.ingredients.map((ingredient, idx) => (
-          <MotionCard
-            key={idx}
-            className="flex flex-row items-stretch overflow-hidden"
-            initial={{ opacity: 0, y: 30 }}
-            // viewport={{ once: true }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              transition: {
-                duration: 0.5,
-                delay: 0.15 * idx,
-              },
-            }}
-          >
-            <CardHeader className="p-0 w-10 flex justify-center items-center bg-accent text-primary">
-              <CardTitle>{idx + 1}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex p-0 gap-4">
-              <div className="flex flex-row gap-4 items-center">
-                <Image
-                  src={`http://www.themealdb.com/images/ingredients/${ingredient.name}.png`}
-                  className="object-cover size-16 shadow p-1 rounded-none size-15"
-                />
-              </div>
-              <div className="flex flex-col justify-center gap-[.15rem]">
-                <span>{ingredient.name}</span>
-                <Separator />
-                <span>
-                  Measure:{" "}
-                  <span className="text-primary">{ingredient.measure}</span>
-                </span>
-              </div>
-            </CardContent>
-          </MotionCard>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-3">
+          {recipe.ingredients.map((ingredient, idx) => (
+            <MotionCard
+              key={idx}
+              className="flex flex-row items-stretch overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              // viewport={{ once: true }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: 0.5,
+                  delay: 0.15 * idx,
+                },
+              }}
+            >
+              <CardHeader className="p-0 w-10 flex justify-center items-center bg-accent text-primary">
+                <CardTitle>{idx + 1}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex p-0 gap-4">
+                <div className="flex flex-row gap-4 items-center">
+                  <Image
+                    src={`http://www.themealdb.com/images/ingredients/${ingredient.name}.png`}
+                    className="object-cover size-16 shadow p-1 rounded-none size-15"
+                  />
+                </div>
+                <div className="flex flex-col justify-center gap-[.15rem]">
+                  <span>{ingredient.name}</span>
+                  <Separator />
+                  <span>
+                    Measure:{" "}
+                    <span className="text-primary">{ingredient.measure}</span>
+                  </span>
+                </div>
+              </CardContent>
+            </MotionCard>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
