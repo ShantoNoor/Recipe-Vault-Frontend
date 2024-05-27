@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
           if (res.user?.email) {
             const data = {
               displayName: res.user?.displayName || "",
-              email: res.user.email,
+              email: res.user?.email,
               photoURL: res.user?.photoURL || "",
             };
             axiosPublic
@@ -65,7 +65,7 @@ const AuthProvider = ({ children }) => {
                     setUser(res.data);
                     resolve(res.data);
                     toast.success(`Welcome ${res.data.displayName} !`);
-                    
+
                     const { accessToken, refreshToken } = result.data;
                     localStorage.setItem("accessToken", accessToken);
                     localStorage.setItem("refreshToken", refreshToken);

@@ -50,7 +50,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const Recipes = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
 
@@ -272,17 +272,17 @@ const Recipes = () => {
                           return navigate(`/view-recipe/${recipe._id}`);
                         }
 
-                        if (user.coin < 10) {
+                        if (user?.coin < 10) {
                           return navigate(`/purchase-coin`);
                         }
 
-                        if (user.coin > 10) {
+                        if (user?.coin > 10) {
                           //show alert
                           setOpen(true);
 
                           // set ids for update
                           setUpdate({
-                            user_id: user._id,
+                            user_id: user?._id,
                             recipe_id: recipe._id,
                             author_id: recipe.author._id,
                           });
@@ -317,6 +317,9 @@ const Recipes = () => {
                 //redirect to recipe page
                 if (res.data === "success") {
                   toast.success("Recipe added to your account!");
+                  const newUser = { ...user };
+                  newUser.coin = newUser.coin - 10;
+                  setUser(newUser);
                   navigate(`/view-recipe/${update.recipe_id}`);
                 }
               }}

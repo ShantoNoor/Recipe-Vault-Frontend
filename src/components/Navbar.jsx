@@ -145,7 +145,7 @@ const Navbar = () => {
                   variant="outline"
                   className="rounded-md h-9 flex items-center gap-1 text-primary cursor-pointer"
                 >
-                  <Coins /> {user.coin}
+                  <Coins /> {user?.coin}
                 </Badge>
               </Link>
               <DropdownMenu>
@@ -157,11 +157,11 @@ const Navbar = () => {
                   >
                     <Avatar className="size-9">
                       <AvatarImage
-                        src={user.photoURL}
+                        src={user?.photoURL}
                         className="object-cover"
                       />
                       <AvatarFallback>
-                        {user.displayName[0].toUpperCase()}
+                        {user?.displayName[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Toggle user menu</span>
@@ -169,9 +169,9 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel className="flex flex-col gap-1 items-center justify-center">
-                    <span>{user.displayName}</span>
+                    <span>{user?.displayName}</span>
                     <Separator />
-                    <Badge className="">Coins: {user.coin}</Badge>
+                    <Badge className="">Coins: {user?.coin}</Badge>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <Link to="/add-recipe">

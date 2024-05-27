@@ -1,7 +1,7 @@
 import Image from "@/components/Image";
 import Spinner from "@/components/Spinner";
 import { Separator } from "@/components/ui/separator";
-import axiosPublic from "@/hooks/useAxios";
+import { useAxiosSecure } from "@/hooks/useAxios";
 import minutesToHoursAndMinutes from "@/lib/minutesToHoursAndMinutes";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
@@ -15,26 +15,24 @@ import {
 } from "@/components/ui/card";
 import Title from "@/components/Title";
 import { motion } from "framer-motion";
-import useAuth from "@/hooks/useAuth";
 
 const MotionCard = motion(Card);
 
 const ViewRecipe = () => {
   const { _id } = useParams();
-  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const {
     data: recipe,
     error,
     isPending,
-    refetch,
   } = useQuery({
     queryKey: ["recipes", `_id=${_id}`],
     enabled: !!_id,
     queryFn: async () => {
       try {
-        const result = await axiosPublic.get(`/recipes?_id=${_id}`);
-        return result.data[0];
+        const result = await axiosSecure.post(`/recipes/${_id}`);
+        return result.data;
       } catch (err) {
         console.error("Error fetching recipes:", err);
       }
